@@ -1,19 +1,18 @@
-#include <stdio.h>
-#include "driver/gpio.h"
+#include <string.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "nvs_flash.h"
+
+#include "wifi/wifi.h"
 
 void app_main(void)
 {
-    gpio_set_direction(GPIO_NUM_0, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(GPIO_NUM_0, GPIO_PULLUP_ONLY);
-
-    while (true) {
-        if (gpio_get_level(GPIO_NUM_0)) {
-            printf("GPIO 0,5 are: HIGH\n");
-        } else {
-            printf("GPIO 0,5 are: LOW\n");
-        }
-        vTaskDelay(10);
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
     }
+    ESP_ERROR_CHECK(ret);
+
+    // Initialize the Wi-Fi connection with SmartConfig using EspTouch
+    initialise_wifi();
 }

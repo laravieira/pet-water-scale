@@ -4,3 +4,5 @@
 /hello_world
 /build
 /sdkconfig.old
+/managed_components
+/esp32*
